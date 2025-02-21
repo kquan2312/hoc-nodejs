@@ -1,13 +1,19 @@
-const http = require("http");
+const express = require("express");
+const app = express();
+const port = 3000;
+const path = require("path");
+const bodyParser = require("body-parser");
+const adminData = require("./router/admin.js");
+const shopRoutes = require("./router/shop.js");
 
-const server = http.createServer((req, res) => {
-  console.log("run request ...");
-  res.setHeader("Content-Type", "text/html");
-  res.write("<h3>Hello world!</h3>");
-  res.write("<h2>Learn Nodejs on ytube</h2>");
-  res.end();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use("/admin", adminData.router);
+app.use(shopRoutes);
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, "views", "404.html"));
 });
-
-server.listen(4000, "localhost", () => {
-  console.log("Node.JS server is running on port: 4000");
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
 });
